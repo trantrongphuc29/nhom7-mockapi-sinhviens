@@ -6,68 +6,169 @@
   <style>
     body {
       font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
       padding: 20px;
+      background-color: #f5f5f5;
     }
+    
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    h1, h2 {
+      color: #333;
+    }
+    
     form {
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 5px;
     }
+    
     input {
-      padding: 8px;
+      padding: 10px;
       margin-right: 10px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      font-size: 14px;
     }
+    
     button {
-      padding: 8px 12px;
+      padding: 10px 15px;
       cursor: pointer;
+      border: none;
+      border-radius: 3px;
+      font-size: 14px;
     }
+    
+    button[type="submit"] {
+      background: #007bff;
+      color: white;
+    }
+    
+    button[type="button"] {
+      background: #6c757d;
+      color: white;
+    }
+    
+    .edit-btn {
+      background: #28a745;
+      color: white;
+      margin-right: 5px;
+    }
+    
+    .delete-btn {
+      background: #dc3545;
+      color: white;
+    }
+    
     table {
       width: 100%;
       border-collapse: collapse;
+      margin-top: 20px;
     }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 10px;
+    
+    th {
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    td {
+      border: 1px solid #ddd;
+      padding: 12px;
       text-align: center;
     }
+    
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    
     img {
       width: 50px;
       height: 50px;
       border-radius: 50%;
+      object-fit: cover;
     }
   </style>
 </head>
 <body>
+  <div class="container">
     <h1>Danh sách thành viên nhóm</h1>
     
-    <h2>Trần Trọng Phúc - DH52201259</h2>
-    <h2>Lê Nguyễn Huy Hoàng - DH52200706</h2>
-    <h2>Đỗ Văn Hin - DH52200690</h2>
-    <h2>Lê Văn Hoàng Dương - DH52200546</h2>
-    <h2>Trần Chí Cường - DH52200428</h2>
-    <h2>Hồ Đức Đạt - DH52200462</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th>Họ và tên</th>
+          <th>MSSV</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Trần Trọng Phúc</td>
+          <td>DH52201259</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Lê Nguyễn Huy Hoàng</td>
+          <td>DH52200706</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Đỗ Văn Hin</td>
+          <td>DH52200690</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Lê Văn Hoàng Dương</td>
+          <td>DH52200546</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Trần Chí Cường</td>
+          <td>DH52200428</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Hồ Đức Đạt</td>
+          <td>DH52200462</td>
+        </tr>
+      </tbody>
+    </table>
 
-  <h1>Thêm sinh viên</h1>
+    <h1>Thêm sinh viên</h1>
 
-  <form id="add-form">
-    <input type="text" id="name" placeholder="Tên sinh viên" required />
-    <input type="text" id="avatar" placeholder="Link avatar" />
-    <button type="submit" id="submit-btn">Thêm</button>
-    <button type="button" id="cancel-btn" style="display:none;">Hủy</button>
-  </form>
+    <form id="add-form">
+      <input type="text" id="name" placeholder="Tên sinh viên" required />
+      <input type="text" id="avatar" placeholder="Link avatar" />
+      <button type="submit" id="submit-btn">Thêm</button>
+      <button type="button" id="cancel-btn" style="display:none;">Hủy</button>
+    </form>
 
-  <h2>Danh sách sinh viên</h2>
+    <h2>Danh sách sinh viên</h2>
 
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Avatar</th>
-        <th>Tên</th>
-        <th>Ngày tạo</th>
-        <th>Hành động</th>
-      </tr>
-    </thead>
-    <tbody id="student-table"></tbody>
-  </table>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Avatar</th>
+          <th>Tên</th>
+          <th>Ngày tạo</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody id="student-table"></tbody>
+    </table>
+  </div>
 
   <script>
     const API_URL = "https://6982f5869c3efeb892a3dbe7.mockapi.io/api/sinhviens";
@@ -91,8 +192,8 @@
                 <td>${sv.name}</td>
                 <td>${new Date(sv.createdAt).toLocaleDateString()}</td>
                 <td>
-                  <button onclick="editStudent(${sv.id})">Sửa</button>
-                  <button onclick="deleteStudent(${sv.id})">Xóa</button>
+                  <button class="edit-btn" onclick="editStudent(${sv.id})">Sửa</button>
+                  <button class="delete-btn" onclick="deleteStudent(${sv.id})">Xóa</button>
                 </td>
               </tr>
             `;
