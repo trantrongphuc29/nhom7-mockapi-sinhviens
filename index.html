@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quản lý sinh viên</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    input {
+      padding: 8px;
+      margin-right: 10px;
+    }
+    button {
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+    <h1>Danh sách thành viên nhóm</h1>
+    
+    <h2>Trần Trọng Phúc - DH52201259</h2>
+    <h2>Lê Nguyễn Huy Hoàng - DH52200706</h2>
+    <h2>Đỗ Văn Hin - DH52200690</h2>
+    <h2>Lê Văn Hoàng Dương - DH52200546</h2>
+    <h2>Trần Chí Cường - DH52200428</h2>
+    <h2>Hồ Đức Đạt - DH52200462</h2>
+
+  <h1>Thêm sinh viên</h1>
+
+  <form id="add-form">
+    <input type="text" id="name" placeholder="Tên sinh viên" required />
+    <input type="text" id="avatar" placeholder="Link avatar" />
+    <button type="submit" id="submit-btn">Thêm</button>
+    <button type="button" id="cancel-btn" style="display:none;">Hủy</button>
+  </form>
+
+  <h2>Danh sách sinh viên</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Avatar</th>
+        <th>Tên</th>
+        <th>Ngày tạo</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody id="student-table"></tbody>
+  </table>
+
+  <script>
+    const API_URL = "https://6982f5869c3efeb892a3dbe7.mockapi.io/api/sinhviens";
+    let editingId = null;
+
+    // Load danh sách sinh viên
+    function loadStudents() {
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.getElementById("student-table");
+          tbody.innerHTML = "";
+
+          data.forEach(sv => {
+            tbody.innerHTML += `
+              <tr>
+                <td>${sv.id}</td>
+                <td>
+                  <img src="${sv.avatar || 'https://i.pravatar.cc/50'}">
+                </td>
+                <td>${sv.name}</td>
+                <td>${new Date(sv.createdAt).toLocaleDateString()}</td>
+                <td>
+                  <button onclick="editStudent(${sv.id})">Sửa</button>
+                  <button onclick="deleteStudent(${sv.id})">Xóa</button>
+                </td>
+              </tr>
+            `;
+          });
+        });
+    }
+
+    // Thêm/Cập nhật sinh viên
+    document.getElementById("add-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const avatar = document.getElementById("avatar").value;
+
+      const studentData = {
+        name: name,
+        avatar: avatar || "https://i.pravatar.cc/150"
+      };
+
+      if (editingId) {
+        // Cập nhật
+        fetch(API_URL + "/" + editingId, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(studentData)
+        })
+        .then(res => res.json())
+        .then(() => {
+          loadStudents();
+          resetForm();
+        });
+      } else {
+        // Thêm mới
+        fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(studentData)
+        })
+        .then(res => res.json())
+        .then(() => {
+          loadStudents();
+          resetForm();
+        });
+      }
+    });
+
+    // Xóa sinh viên
+    function deleteStudent(id) {
+      if (confirm("Bạn chắc chắn muốn xóa sinh viên này?")) {
+        fetch(API_URL + "/" + id, {
+          method: "DELETE"
+        })
+        .then(() => {
+          loadStudents();
+        });
+      }
+    }
+
+    // Sửa sinh viên
+    function editStudent(id) {
+      fetch(API_URL + "/" + id)
+        .then(res => res.json())
+        .then(sv => {
+          document.getElementById("name").value = sv.name;
+          document.getElementById("avatar").value = sv.avatar;
+          
+          editingId = id;
+          document.getElementById("submit-btn").textContent = "Cập nhật";
+          document.getElementById("cancel-btn").style.display = "inline-block";
+          document.getElementById("name").focus();
+        });
+    }
+
+    // Hủy chỉnh sửa
+    document.getElementById("cancel-btn").addEventListener("click", function() {
+      resetForm();
+    });
+
+    function resetForm() {
+      document.getElementById("add-form").reset();
+      editingId = null;
+      document.getElementById("submit-btn").textContent = "Thêm";
+      document.getElementById("cancel-btn").style.display = "none";
+    }
+
+    loadStudents();
+  </script>
+
+</body>
+</html>
